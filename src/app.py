@@ -1,9 +1,9 @@
-import service
+import pick3
 
 print("Welcome to Python Hello World!!!!!!!!!!!!!!")
 
 
-service.getPick3Data()
+pick3.getPick3Data()
 
 
 
