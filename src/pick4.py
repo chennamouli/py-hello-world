@@ -3,11 +3,11 @@ from collections import Counter
 from constants import *
 from util import *
 
-def getPick3Data():
-    # data = getCSVDataAsJson(LOTTERY_BASE_URL + PICK3_MORNING_URL, PICK3_COLUMNS)
-    data = getCSVDataAsJson('assets/pick3morning.csv', PICK3_COLUMNS)
+def getPick4Data():
+    # data = getCSVDataAsJson(LOTTERY_BASE_URL + DAILY4_MORNING_URL, DAILY4_COLUMNS)
+    data = getCSVDataAsJson('assets/daily4morning.csv', DAILY4_COLUMNS)
     data = cleanUpData(data)
-    saveJsonToFile(data, 'assets/pick3morning.json')
+    saveJsonToFile(data, 'assets/daily4morning.json')
     
     all_numbers = getAllNumbers(data)
     calculateStatistics(all_numbers)
@@ -25,7 +25,7 @@ def getPick3Data():
 
 
 
-getPick3Data()
+getPick4Data()
 
 
 
