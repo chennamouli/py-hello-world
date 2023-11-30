@@ -1,7 +1,5 @@
-*.csv
-*.json
-test.py
 *.venv
 __pycache__
 .DS_Store
-assets/*
+test.py
+# assets/*
