@@ -91,12 +91,12 @@ def calculateStatistics(data: list):
     
 def findRepeatedNumbers(data: list):
     repeated_numbers = [k for k,v in Counter(data).items() if v>1]
-    print(f'Total Repeated Numbers found: {len(repeated_numbers)} ==> ', repeated_numbers)
+    # print(f'Total Repeated Numbers found: {len(repeated_numbers)} ==> ', repeated_numbers)
     return repeated_numbers
 
 def filterByKey(data: list, key, value):
-    matchFound = list(filter(lambda item: str(item[key]).startswith(value), data))
-    print(f'Matching results based on {key}({value}) : ', json.dumps(matchFound, indent=4))
+    matchFound = list(filter(lambda item: item[key] == value or str(item[key]).startswith(str(value)), data))
+    print(f'Matching results based on {key}({value}), found {len(matchFound)} : ', json.dumps(matchFound, indent=4))
     return matchFound
 
 def filterByDateRange(data: list, startDate: str, endDate: str):
@@ -105,8 +105,7 @@ def filterByDateRange(data: list, startDate: str, endDate: str):
     matchFound = list(filter(lambda item: startDt <= datetime.fromisoformat(str(item['Date'])) and datetime.fromisoformat(str(item['Date'])) <= endDt, data))
     for item in data:
         dt = datetime.fromisoformat(str(item['Date']))
-        print(dt)
-    print(f'Matching results based on the date range from {startDt} to {endDt} : ', json.dumps(matchFound, indent=4))
+    # print(f'Matching results based on the date range from {startDt} to {endDt}, found {len(matchFound)} : ', json.dumps(matchFound, indent=4))
     return matchFound
     
 def drawHistogram(x: list, bins: int, title: str):
