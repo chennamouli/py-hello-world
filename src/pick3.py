@@ -19,6 +19,9 @@ def getPick3Data():
     findRepeatedNumbers(all_digits)
     # drawHistogram(all_digits, 10, 'Pick3 Digits')
     
+    filterByKey(data, 'Number', 115)
+    filterByKey(data, 'Date', '10-24-2023')
+    
     return data
 
 
@@ -27,7 +30,7 @@ def getPick3Data():
 
 
 getPick3Data()
-findOccurrance(data, 115)
+
 
 
 
