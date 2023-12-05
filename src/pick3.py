@@ -18,6 +18,7 @@ def getPick3Data():
     calculateStatistics(all_digits)
     findRepeatedNumbers(all_digits)
     # drawHistogram(all_digits, 10, 'Pick3 Digits')
+    
     return data
 
 
@@ -26,6 +27,7 @@ def getPick3Data():
 
 
 getPick3Data()
+findOccurrance(data, 115)
 
 
 

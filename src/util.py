@@ -65,6 +65,11 @@ def findRepeatedNumbers(data: list):
     print(f'Total Repeated Numbers found: {len(repeated_numbers)} ==> ', repeated_numbers)
     return repeated_numbers
 
+def findOccurrance(data: list, number):
+    matchFound = list(filter(lambda item: item['Number'] == number, data))
+    print('Matching found: ', json.dumps(matchFound, indent=4))
+    return matchFound  
+
 def saveJsonToFile(data: any, fileName: str):
     pandas.DataFrame(data).to_json(fileName, orient='records', indent=4)
     
