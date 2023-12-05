@@ -8,10 +8,22 @@ from matplotlib.ticker import PercentFormatter
 from collections import Counter
 from constants import *
 
+def getCSVDataAsJson(urls: list, columns: list):
+    dataframesList = []
+    for url in urls:
+        print(f'Reading data from => {url}')
+        dataframe = pandas.read_csv(url, header=None)
+        dataframe.columns = columns
+        dataframesList.append(dataframe)
+    dataframes = pandas.concat(dataframesList, axis=0)
+    result = dataframeToJson(dataframes)
+    print(f'Total records found for {url}: {len(result)}')
+    return result
+
 def cleanUpData(data: any):
     for index, item in enumerate(data):
     # for item in data:
-        item['Date'] = str(item['Month']).zfill(2) +'-'+ str(item['Day']).zfill(2) +'-'+ str(item['Year'])
+        item['Date'] = str(item['Year']) +'-'+ str(item['Month']).zfill(2) +'-'+ str(item['Day']).zfill(2) + drawEventTime(item)
         number = str(item['Num1']) + str(item['Num2']) + str(item['Num3'])
         if 'Num4' in item: number+= str(item['Num4'])
         if 'Num5' in item: number+= str(item['Num5'])
@@ -21,6 +33,29 @@ def cleanUpData(data: any):
         del item['Ball1']
         del item['Ball2']
     return data
+
+def sortByKey(data: list, key):
+    print('Before sorting', data[0])
+    sortedDataFrame = pandas.DataFrame(data).sort_values(by=key)
+    sortedData = dataframeToJson(sortedDataFrame)
+    print('After sorting', sortedData[0])
+    return sortedData
+
+def dataframeToJson(df):
+    return json.loads(df.to_json(orient='records', indent=4))
+
+def saveJsonToFile(data: any, fileName: str):
+    pandas.DataFrame(data).to_json(fileName, orient='records', indent=4)
+    
+def drawEventTime(event):
+    if str(event['GameName']).endswith('Morning'):
+        return 'T09:50:00'
+    if str(event['GameName']).endswith('Day'):
+        return 'T12:17:00'
+    if str(event['GameName']).endswith('Evening'):
+        return 'T17:50:00'
+    else:
+        return 'T22:02:00'
 
 def getAllNumbers(data: any): 
     all_numbers = pandas.DataFrame(data)['Number']
@@ -37,16 +72,6 @@ def getAllDigits(data: any):
         if 'Num5' in item: list.append(item['Num5'])
     # print(f'All Digits: ', list)
     return list
-
-def getCSVDataAsJson(url: str, columns: list):
-    dataframe = pandas.read_csv(url, header=None)
-    dataframe.columns = columns
-    # uncomment to save to local file
-    # dataframe.to_json('pick3morning.json', orient='records', indent=4)
-    dataAsJsonStr = dataframe.to_json(orient='records', indent=4)
-    result = json.loads(dataAsJsonStr)
-    print(f'Total records found for {url}: {len(result)}')
-    return result
 
 def calculateStatistics(data: list):
     stats = {}
@@ -69,9 +94,6 @@ def filterByKey(data: list, key, value):
     matchFound = list(filter(lambda item: item[key] == value, data))
     print(f'Matching results based on {key} : ', json.dumps(matchFound, indent=4))
     return matchFound
-
-def saveJsonToFile(data: any, fileName: str):
-    pandas.DataFrame(data).to_json(fileName, orient='records', indent=4)
     
 def drawHistogram(x: list, bins: int, title: str):
     n_bins = bins

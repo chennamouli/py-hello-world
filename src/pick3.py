@@ -5,9 +5,10 @@ from util import *
 
 def getPick3Data():
     # data = getCSVDataAsJson(LOTTERY_BASE_URL + PICK3_MORNING_URL, PICK3_COLUMNS)
-    data = getCSVDataAsJson('assets/pick3morning.csv', PICK3_COLUMNS)
+    data = getCSVDataAsJson(['assets/pick3morning.csv', 'assets/pick3day.csv'], PICK3_COLUMNS)
     data = cleanUpData(data)
-    saveJsonToFile(data, 'assets/pick3morning.json')
+    data = sortByKey(data, 'Date')
+    saveJsonToFile(data, 'assets/pick3.json')
     
     all_numbers = getAllNumbers(data)
     calculateStatistics(all_numbers)

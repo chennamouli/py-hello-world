@@ -5,7 +5,7 @@ from util import *
 
 def getPick4Data():
     # data = getCSVDataAsJson(LOTTERY_BASE_URL + DAILY4_MORNING_URL, DAILY4_COLUMNS)
-    data = getCSVDataAsJson('assets/daily4morning.csv', DAILY4_COLUMNS)
+    data = getCSVDataAsJson(['assets/daily4morning.csv'], DAILY4_COLUMNS)
     data = cleanUpData(data)
     saveJsonToFile(data, 'assets/daily4morning.json')
     
