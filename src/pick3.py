@@ -32,10 +32,6 @@ def analyseData():
     
     
 
-
-
-
-
 analyseData()
 
 
