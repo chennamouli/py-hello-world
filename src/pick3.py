@@ -4,12 +4,17 @@ from constants import *
 from util import *
 
 def getPick3Data():
-    # data = getCSVDataAsJson(LOTTERY_BASE_URL + PICK3_MORNING_URL, PICK3_COLUMNS)
-    data = getCSVDataAsJson(['assets/pick3morning.csv', 'assets/pick3day.csv'], PICK3_COLUMNS)
+    data = getCSVDataAsJson([LOTTERY_BASE_URL + PICK3_MORNING_URL, LOTTERY_BASE_URL + PICK3_DAY_URL, LOTTERY_BASE_URL + PICK3_EVENING_URL, LOTTERY_BASE_URL + PICK3_NIGHT_URL], PICK3_COLUMNS)
+    # data = getCSVDataAsJson(['assets/pick3.csv'], PICK3_COLUMNS)
+    saveCsvToFile(data, 'assets/pick3.csv') # Save csv data to 
     data = cleanUpData(data)
     data = sortByKey(data, 'Date')
     saveJsonToFile(data, 'assets/pick3.json')
-    
+    return data
+
+def analyseData():
+    data = getPick3Data()
+    data = filterByDateRange(data, '2023-10-03', '2023-10-05') # To analyse specific data range
     all_numbers = getAllNumbers(data)
     calculateStatistics(all_numbers)
     findRepeatedNumbers(all_numbers)
@@ -20,18 +25,12 @@ def getPick3Data():
     findRepeatedNumbers(all_digits)
     # drawHistogram(all_digits, 10, 'Pick3 Digits')
     
-    filterByKey(data, 'Number', 115)
-    filterByKey(data, 'Date', '10-24-2023')
-    
-    return data
 
 
 
 
 
-
-getPick3Data()
-
+analyseData()
 
 
 

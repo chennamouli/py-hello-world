@@ -2,6 +2,7 @@ import json
 import pandas
 import statistics
 import numpy as np
+from datetime import datetime
 from matplotlib import colors
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
@@ -12,7 +13,7 @@ def getCSVDataAsJson(urls: list, columns: list):
     dataframesList = []
     for url in urls:
         print(f'Reading data from => {url}')
-        dataframe = pandas.read_csv(url, header=None)
+        dataframe = pandas.read_csv(url, header=None, on_bad_lines='skip')
         dataframe.columns = columns
         dataframesList.append(dataframe)
     dataframes = pandas.concat(dataframesList, axis=0)
@@ -29,16 +30,16 @@ def cleanUpData(data: any):
         if 'Num5' in item: number+= str(item['Num5'])
 
         item['Number'] = int(number)
-        item['Ball'] = int(item['Ball1'] or item['Ball2'])
+        item['Ball'] = int(item['Ball1'] or item['Ball2'] or 999)
         del item['Ball1']
         del item['Ball2']
     return data
 
 def sortByKey(data: list, key):
-    print('Before sorting', data[0])
+    # print('Before sorting', data[0])
     sortedDataFrame = pandas.DataFrame(data).sort_values(by=key)
     sortedData = dataframeToJson(sortedDataFrame)
-    print('After sorting', sortedData[0])
+    # print('After sorting', sortedData[0])
     return sortedData
 
 def dataframeToJson(df):
@@ -46,6 +47,9 @@ def dataframeToJson(df):
 
 def saveJsonToFile(data: any, fileName: str):
     pandas.DataFrame(data).to_json(fileName, orient='records', indent=4)
+    
+def saveCsvToFile(data: any, fileName: str):
+    pandas.DataFrame(data).to_csv(fileName, header=0, index=0)
     
 def drawEventTime(event):
     if str(event['GameName']).endswith('Morning'):
@@ -91,8 +95,18 @@ def findRepeatedNumbers(data: list):
     return repeated_numbers
 
 def filterByKey(data: list, key, value):
-    matchFound = list(filter(lambda item: item[key] == value, data))
-    print(f'Matching results based on {key} : ', json.dumps(matchFound, indent=4))
+    matchFound = list(filter(lambda item: str(item[key]).startswith(value), data))
+    print(f'Matching results based on {key}({value}) : ', json.dumps(matchFound, indent=4))
+    return matchFound
+
+def filterByDateRange(data: list, startDate: str, endDate: str):
+    startDt = datetime.fromisoformat(startDate)
+    endDt = datetime.fromisoformat(endDate+'T23:59:59')
+    matchFound = list(filter(lambda item: startDt <= datetime.fromisoformat(str(item['Date'])) and datetime.fromisoformat(str(item['Date'])) <= endDt, data))
+    for item in data:
+        dt = datetime.fromisoformat(str(item['Date']))
+        print(dt)
+    print(f'Matching results based on the date range from {startDt} to {endDt} : ', json.dumps(matchFound, indent=4))
     return matchFound
     
 def drawHistogram(x: list, bins: int, title: str):
