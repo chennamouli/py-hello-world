@@ -10,8 +10,8 @@ def getPick4Data():
     # data = getCSVDataAsJson(['assets/daily4.csv'], PICK3_COLUMNS)
     saveCsvToFile(data, 'assets/daily4.csv') # Save csv data to 
     data = cleanUpData(data)
-    data = sortByKey(data, 'Date')
     data = filterByDateRange(data, '2020-01-01', date.today().strftime('%Y-%m-%d')) # Read only specific data range
+    data = sortByKey(data, 'Date')
     saveJsonToFile(data, 'assets/daily4.json')
     return data
 

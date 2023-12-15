@@ -21,16 +21,21 @@ def getCSVDataAsJson(urls: list, columns: list):
     print(f'Total records found for {url}: {len(result)}')
     return result
 
-def cleanUpData(data: any):
+def cleanUpData(data: any, bucket_list: list):
     for index, item in enumerate(data):
     # for item in data:
         item['Date'] = str(item['Year']) +'-'+ str(item['Month']).zfill(2) +'-'+ str(item['Day']).zfill(2) + drawEventTime(item)
         number = str(item['Num1']) + str(item['Num2']) + str(item['Num3'])
         if 'Num4' in item: number+= str(item['Num4'])
         if 'Num5' in item: number+= str(item['Num5'])
-
-        item['Number'] = int(number)
         item['Ball'] = int(item['Ball1'] or item['Ball2'] or 999)
+        
+        item['Number'] = int(number)
+        item['SortedDigitsNumber'] = ''.join(map(str, (sorted([item['Num1'], item['Num2'], item['Num3']]))))
+        item['SumOfDigits'] = item['Num1'] + item['Num2'] + item['Num3']
+        item['BucketId'] = findBucketId([item['Num1'], item['Num2'], item['Num3']], bucket_list)
+        item['RepeatedNumbers'] = hasRepeatedNumbers([item['Num1'], item['Num2'], item['Num3']])
+        item['Quarter'] = findNumberQuarterRange([item['Num1'], item['Num2'], item['Num3']])
         del item['Ball1']
         del item['Ball2']
     return data
@@ -62,8 +67,8 @@ def drawEventTime(event):
         return 'T22:02:00'
 
 def getAllNumbers(data: any): 
-    all_numbers = pandas.DataFrame(data)['Number']
-    # print([i for i in all_numbers]) # print all the numbers
+    all_numbers = pandas.DataFrame(data)['SortedDigitsNumber']
+    print([i for i in all_numbers] if len(all_numbers) < MAX_PRINT_TO_CONSOLE_ITEMS else FOUND_MANY) # print all the numbers
     return all_numbers
 
 def getAllDigits(data: any): 
@@ -105,8 +110,22 @@ def filterByDateRange(data: list, startDate: str, endDate: str):
     matchFound = list(filter(lambda item: startDt <= datetime.fromisoformat(str(item['Date'])) and datetime.fromisoformat(str(item['Date'])) <= endDt, data))
     for item in data:
         dt = datetime.fromisoformat(str(item['Date']))
-    print(f'Matching results based on the date range from {startDt} to {endDt}, found {len(matchFound)} : ', json.dumps(matchFound, indent=4) if len(matchFound) < MAX_PRINT_TO_CONSOLE_ITEMS else FOUND_MANY)
+    # print(f'Matching results based on the date range from {startDt} to {endDt}, found {len(matchFound)} : ', json.dumps(matchFound, indent=4) if len(matchFound) < MAX_PRINT_TO_CONSOLE_ITEMS else FOUND_MANY)
     return matchFound
+
+def findBucketId(input_list, bucket_list):
+    result = [bucket["id"] for bucket in bucket_list if all(elem in bucket["values"] for elem in input_list)]
+    return result[0] if result else 0
+    
+def hasRepeatedNumbers(values: list):
+    return len(values) != len(set(values))
+
+def findNumberQuarterRange(values: list):
+    isPick3 = len(values) == 3
+    total_values = 1000 if isPick3 else 10000
+    number = int(''.join(map(str, values)))
+    return 1 if number <= total_values/4 else 2 if number <= total_values/2 else 3 if number <= total_values*(3/4) else 4
+    
     
 def drawHistogram(x: list, bins: int, title: str):
     n_bins = bins
