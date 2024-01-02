@@ -33,7 +33,7 @@ def cleanUpData(data: any, bucket_list: list):
         item['Number'] = int(number)
         item['SortedDigitsNumber'] = ''.join(map(str, (sorted([item['Num1'], item['Num2'], item['Num3']]))))
         item['SumOfDigits'] = item['Num1'] + item['Num2'] + item['Num3']
-        item['BucketId'] = findBucketId([item['Num1'], item['Num2'], item['Num3']], bucket_list)
+        item['Bucket'] = findBucketId([item['Num1'], item['Num2'], item['Num3']], bucket_list)
         item['RepeatedNumbers'] = hasRepeatedNumbers([item['Num1'], item['Num2'], item['Num3']])
         item['Quarter'] = findNumberQuarterRange([item['Num1'], item['Num2'], item['Num3']])
         del item['Ball1']
@@ -68,7 +68,7 @@ def drawEventTime(event):
 
 def getAllNumbers(data: any): 
     all_numbers = pandas.DataFrame(data)['SortedDigitsNumber']
-    print([i for i in all_numbers] if len(all_numbers) < MAX_PRINT_TO_CONSOLE_ITEMS else FOUND_MANY) # print all the numbers
+    # print([i for i in all_numbers] if len(all_numbers) < MAX_PRINT_TO_CONSOLE_ITEMS else FOUND_MANY) # print all the numbers
     return all_numbers
 
 def getAllDigits(data: any): 
@@ -126,7 +126,46 @@ def findNumberQuarterRange(values: list):
     number = int(''.join(map(str, values)))
     return 1 if number <= total_values/4 else 2 if number <= total_values/2 else 3 if number <= total_values*(3/4) else 4
     
-    
+def most_repeated_numbers(arr):
+    # Use Counter to count occurrences of each element
+    counts = Counter(arr)
+    print('most_repeated_numbers counter: ', counts.most_common(2))
+    numbers = get_first_n_keys(counts, 2) 
+    print('Most repeated numbers: ', numbers)
+    return numbers   
+   
+def get_first_n_keys(counter, n):
+    return [key for key, _ in counter.most_common(n)]
+   
+def is_array_contained(arr1, arr2):
+    return all(elem in arr1 for elem in arr2)
+
+def can_be_formed(number, allowed_digits):
+    return set(map(int, str(number))) <= set(allowed_digits)
+
+def find_numbers_with_digits(data, allowed_digits):
+    result = []
+    for number in data:
+        if can_be_formed(number, allowed_digits):
+            result.append(number)
+    return result
+
+def findHighProbabilityNumberList(numbers, value):
+    result = {}
+    for i in range(10):
+        for j in range(10):
+            valueArray = list({int(digit) for digit in str(value) + str(i) + str(j)}) #list(set(map(int, str(value) + str(i))))
+            # if len(valueArray) == len(list(set(map(int, str(value))))):
+            if len(valueArray) != 5:
+                continue
+            foundMatches = find_numbers_with_digits(numbers, valueArray)
+            if len(foundMatches) > 0:
+                key = ''.join(map(str, sorted(valueArray)))
+                result[key] = result.get(key, 0) + len(foundMatches)
+    print("findHighProbabilityNumberList: ", result)
+    return result
+
+
 def drawHistogram(x: list, bins: int, title: str):
     n_bins = bins
     legend = ['Distribution']
