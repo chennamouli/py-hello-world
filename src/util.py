@@ -28,16 +28,42 @@ def cleanUpData(data: any, bucket_list: list):
         number = str(item['Num1']) + str(item['Num2']) + str(item['Num3'])
         if 'Num4' in item: number+= str(item['Num4'])
         if 'Num5' in item: number+= str(item['Num5'])
-        item['Ball'] = int(item['Ball1'] or item['Ball2'] or 999)
+        if 'Num6' in item: number+= str(item['Num6'])
+        # item['Ball'] = int(item['Ball1'] or item['Ball2'] if 'Ball2' in item else 999)
+        # item['Ball'] = int(item['Ball1'] if 'Ball1' in item else item['Ball2'] if 'Ball2' in item else 999)
+        ball1 = item.get('Ball1', None)
+        ball2 = item.get('Ball2', None)
+        result = int(ball1) if ball1 is not None else int(ball2) if ball2 is not None else 999
+
+
+        # if 'Num5' in item:
+        numberArray = [str(item['Num1']), str(item['Num2']), str(item['Num3'])]
+        if 'Num4' in item: numberArray.append(str(item['Num4']));
+        if 'Num5' in item: numberArray.append(str(item['Num5']));
+        if 'Num6' in item: numberArray.append(str(item['Num6']));
+        # Convert string array to int array
         
-        item['Number'] = int(number)
-        item['SortedDigitsNumber'] = ''.join(map(str, (sorted([item['Num1'], item['Num2'], item['Num3']]))))
+        numberAsIs = [str(num) for num in numberArray]
+        
+        numberAsIs = "-".join(numberAsIs)
+        number = numberAsIs
+        numberArray = [int(num) for num in numberArray]
+        numberArray.sort()
+        item['SortedDigitsNumber'] = ''.join(map(str, (sorted(numberArray))))
+        item['SortedNumberArray'] = numberArray
+        
+        
+        item['Number'] = number
+        
         item['SumOfDigits'] = item['Num1'] + item['Num2'] + item['Num3']
         item['Bucket'] = findBucketId([item['Num1'], item['Num2'], item['Num3']], bucket_list)
         item['RepeatedNumbers'] = hasRepeatedNumbers([item['Num1'], item['Num2'], item['Num3']])
         item['Quarter'] = findNumberQuarterRange([item['Num1'], item['Num2'], item['Num3']])
-        del item['Ball1']
-        del item['Ball2']
+        if 'Ball1' in item: del item['Ball1']
+        if 'Ball2' in item: del item['Ball2']
+        del item['Year']
+        del item['Month']
+        del item['Day']
     return data
 
 def sortByKey(data: list, key):
@@ -96,7 +122,7 @@ def calculateStatistics(data: list):
     
 def findRepeatedNumbers(data: list):
     repeated_numbers = [k for k,v in Counter(data).items() if v>1]
-    print(f'Total Repeated Numbers found: {len(repeated_numbers)} ==> ', repeated_numbers if len(repeated_numbers) < MAX_PRINT_TO_CONSOLE_ITEMS else FOUND_MANY)
+    # print(f'Total Repeated Numbers found: {len(repeated_numbers)} ==> ', repeated_numbers if len(repeated_numbers) < MAX_PRINT_TO_CONSOLE_ITEMS else FOUND_MANY)
     return repeated_numbers
 
 def filterByKey(data: list, key, value):
@@ -114,6 +140,8 @@ def filterByDateRange(data: list, startDate: str, endDate: str):
     return matchFound
 
 def findBucketId(input_list, bucket_list):
+    if len(bucket_list) == 0:
+        return 0
     result = [bucket["id"] for bucket in bucket_list if all(elem in bucket["values"] for elem in input_list)]
     return result[0] if result else 0
     
@@ -129,8 +157,8 @@ def findNumberQuarterRange(values: list):
 def most_repeated_numbers(arr):
     # Use Counter to count occurrences of each element
     counts = Counter(arr)
-    print('most_repeated_numbers counter: ', counts.most_common(2))
-    numbers = get_first_n_keys(counts, 2) 
+    # print('most_repeated_numbers counter: ', counts.most_common(2))
+    numbers = get_first_n_keys(counts, 11) 
     print('Most repeated numbers: ', numbers)
     return numbers   
    

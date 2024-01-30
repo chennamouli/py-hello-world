@@ -1,5 +1,22 @@
 LOTTERY_BASE_URL = 'https://www.texaslottery.com/export/sites/lottery/Games/'
 
+POWER_BALL_URL = 'Powerball/Winning_Numbers/powerball.csv'
+POWER_BALL_COLUMNS = ['GameName', 'Month', 'Day', 'Year', 'Num1', 'Num2', 'Num3', 'Num4', 'Num5', 'Ball1', 'Ball2']
+# Game Name, Month, Day, Year, Num1, Num2, Num3, Num4, Num5, Powerball, Power Play
+POWER_BALL_BUCKETS = []
+
+
+LOTTO_URL = 'Lotto_Texas/Winning_Numbers/lottotexas.csv'
+LOTTO_COLUMNS = ['GameName', 'Month', 'Day', 'Year', 'Num1', 'Num2', 'Num3', 'Num4', 'Num5', 'Num6']
+# Game Name, Month, Day, Year, Num1, Num2, Num3, Num4, Num5, Num6
+LOTTO_BUCKETS = []
+
+CASH_FIVE_URL = 'Cash_Five/Winning_Numbers/cashfive.csv'
+CASH_FIVE_COLUMNS = ['GameName', 'Month', 'Day', 'Year', 'Num1', 'Num2', 'Num3', 'Num4', 'Num5']
+# Game Name, Month, Day, Year, Num1, Num2, Num3, Num4, Num5
+CASH_FIVE_BUCKETS = []
+
+
 PICK3_MORNING_URL = 'Pick_3/Winning_Numbers/pick3morning.csv'
 PICK3_DAY_URL = 'Pick_3/Winning_Numbers/pick3day.csv'
 PICK3_EVENING_URL = 'Pick_3/Winning_Numbers/pick3evening.csv'
